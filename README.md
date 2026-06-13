@@ -91,7 +91,7 @@ Keep private IPs, private domains, customer names, proxy endpoints, and provider
 
 ## Recommended Install Pattern
 
-For machines you control, install the public tool once and keep private targets in a separate private repository.
+For machines you control, install the public tool once and keep private targets in a separate private repository. The public repository should contain only the script and safe sample config. The private repository should contain your real `config.json`.
 
 Public tool:
 
@@ -101,24 +101,49 @@ sudo git clone git@github.com:sdtaheri/wan-test.git /opt/wan-test
 sudo ln -sf /opt/wan-test/wan-test.sh /usr/local/bin/wan-test
 ```
 
-Private config repository:
+Create a private config repository from a trusted machine:
+
+```sh
+mkdir -p ~/wan-test-private
+cp /opt/wan-test/config.json ~/wan-test-private/config.json
+cd ~/wan-test-private
+```
+
+Edit `~/wan-test-private/config.json` and add your private DNS resolvers, TCP targets, proxy facades, provider IDs, and private domains.
+
+Then publish it as a private GitHub repo:
+
+```sh
+git init
+git add config.json
+git commit -m "Add private wan-test config"
+gh repo create wan-test-private --private --source=. --remote=origin --push
+```
+
+On each trusted machine, clone that private config repo:
 
 ```sh
 mkdir -p ~/.config
-git clone git@github.com:<your-user>/<your-private-wan-config-repo>.git ~/.config/wan-test-private
+git clone git@github.com:<your-user>/wan-test-private.git ~/.config/wan-test-private
 ```
 
 Or, if you use the GitHub CLI on a fresh machine:
 
 ```sh
 gh auth login
-gh repo clone <your-user>/<your-private-wan-config-repo> ~/.config/wan-test-private
+gh repo clone <your-user>/wan-test-private ~/.config/wan-test-private
 ```
 
 Run with the private config:
 
 ```sh
 WAN_TEST_CONFIG=~/.config/wan-test-private/config.json wan-test
+```
+
+Or pass it explicitly:
+
+```sh
+wan-test --config ~/.config/wan-test-private/config.json
 ```
 
 Update later:
