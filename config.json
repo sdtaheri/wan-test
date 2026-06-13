@@ -1,0 +1,65 @@
+{
+  "dnslookupVersion": "1.11.2",
+  "pingTargets": [
+    "1.1.1.1",
+    "8.8.8.8"
+  ],
+  "dns": {
+    "lookupDomains": [
+      "example.com",
+      "google.com",
+      "cloudflare.com"
+    ],
+    "plain": [
+      "1.1.1.1",
+      "8.8.8.8",
+      "9.9.9.9"
+    ],
+    "doh": [
+      "https://cloudflare-dns.com/dns-query",
+      "https://dns.google/dns-query",
+      "https://dns.quad9.net/dns-query"
+    ],
+    "dot": [
+      "tls://1.1.1.1",
+      "tls://8.8.8.8",
+      "tls://dns.quad9.net"
+    ],
+    "doq": [
+      "quic://dns.adguard-dns.com"
+    ],
+    "dnscrypt": []
+  },
+  "http": {
+    "urls": [
+      "http://www.msftconnecttest.com/connecttest.txt",
+      "http://connectivitycheck.gstatic.com/generate_204",
+      "http://captive.apple.com/hotspot-detect.html",
+      "http://example.com"
+    ]
+  },
+  "cdn": {
+    "userAgent": "Mozilla/5.0 (compatible; wan-test/2)",
+    "urls": [
+      {
+        "label": "Cloudflare",
+        "url": "https://www.cloudflare.com/cdn-cgi/trace"
+      },
+      {
+        "label": "CloudFront",
+        "url": "https://d1.awsstatic.com/"
+      },
+      {
+        "label": "Fastly",
+        "url": "https://www.fastly.com/"
+      },
+      {
+        "label": "Akamai",
+        "url": "https://www.akamai.com/favicon.ico"
+      }
+    ]
+  },
+  "tcpTargets": [],
+  "proxyFacadeUserAgent": "Mozilla/5.0 (compatible; wan-test/2)",
+  "proxyFacades": []
+}
