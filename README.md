@@ -91,7 +91,9 @@ Keep private IPs, private domains, customer names, proxy endpoints, and provider
 
 ## Recommended Install Pattern
 
-For machines you control, install the public tool once and keep private targets in a separate private repository. The public repository should contain only the script and safe sample config. The private repository should contain your real `config.json`.
+For machines you control, install the public tool once and keep private targets in a separate secret Gist. The public repository should contain only the script and safe sample config. The Gist should contain your real `config.json`.
+
+GitHub Gists are either public or secret. A secret Gist is unlisted, but anyone with the URL can read it, so only use this for trusted machines and avoid sharing the URL.
 
 Public tool:
 
@@ -101,7 +103,7 @@ sudo git clone git@github.com:sdtaheri/wan-test.git /opt/wan-test
 sudo ln -sf /opt/wan-test/wan-test.sh /usr/local/bin/wan-test
 ```
 
-Create a private config repository from a trusted machine:
+Create the secret config Gist from a trusted machine:
 
 ```sh
 mkdir -p ~/wan-test-private
@@ -111,27 +113,32 @@ cd ~/wan-test-private
 
 Edit `~/wan-test-private/config.json` and add your private DNS resolvers, TCP targets, proxy facades, provider IDs, and private domains.
 
-Then publish it as a private GitHub repo:
+Add an optional README for the Gist:
 
 ```sh
-git init
-git add config.json
-git commit -m "Add private wan-test config"
-gh repo create wan-test-private --private --source=. --remote=origin --push
+cat > README.md <<'EOF'
+# wan-test private config
+
+Private machine-specific config for wan-test.
+
+Clone this Gist to ~/.config/wan-test-private and run:
+
+WAN_TEST_CONFIG=~/.config/wan-test-private/config.json wan-test
+EOF
 ```
 
-On each trusted machine, clone that private config repo:
+Create the secret Gist:
 
 ```sh
-mkdir -p ~/.config
-git clone git@github.com:<your-user>/wan-test-private.git ~/.config/wan-test-private
+gh gist create config.json README.md --desc "wan-test private config for trusted machines"
 ```
 
-Or, if you use the GitHub CLI on a fresh machine:
+Save the Gist URL or ID somewhere private. On each trusted machine, clone it:
 
 ```sh
 gh auth login
-gh repo clone <your-user>/wan-test-private ~/.config/wan-test-private
+mkdir -p ~/.config
+gh gist clone <private-config-gist-id> ~/.config/wan-test-private
 ```
 
 Run with the private config:
@@ -153,7 +160,16 @@ sudo git -C /opt/wan-test pull --ff-only
 git -C ~/.config/wan-test-private pull --ff-only
 ```
 
-This keeps the test runner public and reusable while the machine-specific targets stay private.
+After editing the private config, push it back to the secret Gist:
+
+```sh
+cd ~/.config/wan-test-private
+git add config.json
+git commit -m "Update wan-test config"
+git push
+```
+
+This keeps the test runner public and reusable while the machine-specific targets stay out of the public repository.
 
 ## One-Command Personal Wrapper
 
