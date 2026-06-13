@@ -1,0 +1,4 @@
+*.local.json
+config.private.json
+private/
+.env
